@@ -22,6 +22,17 @@ const BurgerBuilder = () => {
     totalPrice: 4
   });
 
+  const updatePurchaseState = ingredients => {
+    const sum = Object.keys(ingredients)
+      .map(igkey => {
+        return ingredients[igkey];
+      })
+      .reduce((sum, el) => {
+        return sum + el;
+      }, 0);
+    setPurchasable(sum > 0);
+  };
+
   const addIngredientHandler = type => {
     const oldCount = state.ingredients[type];
     const updatedCount = oldCount + 1;
