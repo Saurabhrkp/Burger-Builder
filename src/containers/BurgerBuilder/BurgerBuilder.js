@@ -63,6 +63,7 @@ const BurgerBuilder = () => {
         ingredientAdded={addIngredientHandler}
         ingredientRemoved={removeIngredientHandler}
         disabled={disabledInfo}
+        price={state.totalPrice}
       />
     </Aux>
   );
