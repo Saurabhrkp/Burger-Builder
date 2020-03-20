@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Aux from '../../hoc/Auxiliary';
 import Buger from '../../components/Burger/Burger';
+import BuildControls from '../../components/Burger/BuildControls/BuildControls';
+
+const INGREDIENTS_PRICES = {
+  salad: 0.5,
+  bacon: 0.7,
+  meat: 1.3,
+  cheese: 0.4
+};
 
 const BurgerBuilder = () => {
   const [state, setState] = useState({
@@ -50,8 +58,12 @@ const BurgerBuilder = () => {
 
   return (
     <Aux>
-      <Buger />
-      <div>Build Controls</div>
+      <Buger ingredients={state.ingredients} />
+      <BuildControls
+        ingredientAdded={addIngredientHandler}
+        ingredientRemoved={removeIngredientHandler}
+        disabled={disabledInfo}
+      />
     </Aux>
   );
 };
