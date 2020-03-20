@@ -12,15 +12,14 @@ const INGREDIENTS_PRICES = {
 };
 
 const BurgerBuilder = () => {
-  const [state, setState] = useState({
-    ingredients: {
-      salad: 0,
-      bacon: 0,
-      cheese: 0,
-      meat: 0
-    },
-    totalPrice: 4
+  const [ingredients, setIngredients] = useState({
+    salad: 0,
+    bacon: 0,
+    cheese: 0,
+    meat: 0
   });
+  const [totalPrice, setTotalPrice] = useState(4);
+  const [purchasable, setPurchasable] = useState(false);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
@@ -34,47 +33,50 @@ const BurgerBuilder = () => {
   };
 
   const addIngredientHandler = type => {
-    const oldCount = state.ingredients[type];
+    const oldCount = ingredients[type];
     const updatedCount = oldCount + 1;
-    const updatedIngredients = {
-      ...state.ingredients
-    };
+    const updatedIngredients = { ...ingredients };
     updatedIngredients[type] = updatedCount;
     const priceAddition = INGREDIENTS_PRICES[type];
-    const oldPrice = state.totalPrice;
+    const oldPrice = totalPrice;
     const newPrice = oldPrice + priceAddition;
-    setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    setTotalPrice(newPrice);
+    setIngredients(updatedIngredients);
+    updatePurchaseState(updatedIngredients);
   };
 
   const removeIngredientHandler = type => {
-    const oldCount = state.ingredients[type];
+    const oldCount = ingredients[type];
     if (oldCount <= 0) {
       return;
     }
     const updatedCount = oldCount - 1;
     const updatedIngredients = {
-      ...state.ingredients
+      ...ingredients
     };
     updatedIngredients[type] = updatedCount;
     const priceDeduction = INGREDIENTS_PRICES[type];
-    const oldPrice = state.totalPrice;
+    const oldPrice = totalPrice;
     const newPrice = oldPrice - priceDeduction;
-    setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    setTotalPrice(newPrice);
+    setIngredients(updatedIngredients);
+    updatePurchaseState(updatedIngredients);
   };
 
-  const disabledInfo = { ...state.ingredients };
+  const disabledInfo = { ...ingredients };
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
 
   return (
     <Aux>
-      <Buger ingredients={state.ingredients} />
+      <Buger ingredients={ingredients} />
       <BuildControls
         ingredientAdded={addIngredientHandler}
         ingredientRemoved={removeIngredientHandler}
         disabled={disabledInfo}
-        price={state.totalPrice}
+        price={totalPrice}
+        purchasable={purchasable}
       />
     </Aux>
   );
