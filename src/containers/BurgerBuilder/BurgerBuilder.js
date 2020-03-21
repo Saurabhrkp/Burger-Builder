@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Aux from '../../hoc/Auxiliary/Auxiliary';
 import Buger from '../../components/Burger/Burger';
@@ -116,13 +116,33 @@ const BurgerBuilder = () => {
       });
   };
 
-  let orderSummary = (
-    <OrderSummary
-      ingredients={ingredients}
-      purchaseCanceled={purchaseCancelHandler}
-      purchaseContinued={purchaseContinueHandler}
-    />
-  );
+  let orderSummary = null;
+
+  let burger = error ? <p>Ingredient can't be loaded!</p> : <Spinner />;
+
+  if (ingredients) {
+    burger = (
+      <Aux>
+        <Buger ingredients={ingredients} />
+        <BuildControls
+          ingredientAdded={addIngredientHandler}
+          ingredientRemoved={removeIngredientHandler}
+          disabled={disabledInfo}
+          price={totalPrice}
+          ordered={purchaseHandler}
+          purchasable={purchasable}
+        />
+      </Aux>
+    );
+    orderSummary = (
+      <OrderSummary
+        ingredients={ingredients}
+        purchaseCanceled={purchaseCancelHandler}
+        purchaseContinued={purchaseContinueHandler}
+      />
+    );
+  }
+
   if (loading) {
     orderSummary = <Spinner />;
   }
@@ -132,15 +152,7 @@ const BurgerBuilder = () => {
       <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
         {orderSummary}
       </Modal>
-      <Buger ingredients={ingredients} />
-      <BuildControls
-        ingredientAdded={addIngredientHandler}
-        ingredientRemoved={removeIngredientHandler}
-        disabled={disabledInfo}
-        price={totalPrice}
-        ordered={purchaseHandler}
-        purchasable={purchasable}
-      />
+      {burger}
     </Aux>
   );
 };
