@@ -17,16 +17,21 @@ const INGREDIENTS_PRICES = {
 };
 
 const BurgerBuilder = () => {
-  const [ingredients, setIngredients] = useState({
-    salad: 0,
-    bacon: 0,
-    cheese: 0,
-    meat: 0
-  });
+  const [ingredients, setIngredients] = useState(null);
   const [totalPrice, setTotalPrice] = useState(4);
   const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    axios
+      .get('/ingredients.json')
+      .then(response => {
+        setIngredients(response.data);
+      })
+      .catch(error => setError(true));
+  }, []);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
