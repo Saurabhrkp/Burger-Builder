@@ -5,6 +5,8 @@ import Buger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Spinner from '../../components/UI/Spinner/Spinner';
+import axios from '../../axios-order';
 
 const INGREDIENTS_PRICES = {
   salad: 0.5,
@@ -23,6 +25,7 @@ const BurgerBuilder = () => {
   const [totalPrice, setTotalPrice] = useState(4);
   const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
@@ -80,17 +83,48 @@ const BurgerBuilder = () => {
   };
 
   const purchaseContinueHandler = () => {
-    alert('You Continue!');
+    setLoading(true);
+    const order = {
+      ingredients: ingredients,
+      price: totalPrice,
+      customer: {
+        name: 'Saurabh Patel',
+        address: {
+          street: 'Test Street',
+          pinCode: 421301,
+          country: 'India'
+        },
+        email: 'test@mail.com'
+      },
+      deliveryMethod: 'fastest'
+    };
+    axios
+      .post('/orders.json', order)
+      .then(response => {
+        setLoading(false);
+        setPurchasing(false);
+      })
+      .catch(error => {
+        setLoading(false);
+        setPurchasing(false);
+      });
   };
+
+  let orderSummary = (
+    <OrderSummary
+      ingredients={ingredients}
+      purchaseCanceled={purchaseCancelHandler}
+      purchaseContinued={purchaseContinueHandler}
+    />
+  );
+  if (loading) {
+    orderSummary = <Spinner />;
+  }
 
   return (
     <Aux>
       <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
-        <OrderSummary
-          ingredients={ingredients}
-          purchaseCanceled={purchaseCancelHandler}
-          purchaseContinued={purchaseContinueHandler}
-        />
+        {orderSummary}
       </Modal>
       <Buger ingredients={ingredients} />
       <BuildControls
