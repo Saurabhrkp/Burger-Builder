@@ -16,7 +16,7 @@ const INGREDIENTS_PRICES = {
   cheese: 0.4
 };
 
-const BurgerBuilder = () => {
+const BurgerBuilder = props => {
   const [ingredients, setIngredients] = useState(null);
   const [totalPrice, setTotalPrice] = useState(4);
   const [purchasable, setPurchasable] = useState(false);
@@ -89,31 +89,42 @@ const BurgerBuilder = () => {
   };
 
   const purchaseContinueHandler = () => {
-    setLoading(true);
-    const order = {
-      ingredients: ingredients,
-      price: totalPrice,
-      customer: {
-        name: 'Saurabh Patel',
-        address: {
-          street: 'Test Street',
-          pinCode: 421301,
-          country: 'India'
-        },
-        email: 'test@mail.com'
-      },
-      deliveryMethod: 'fastest'
-    };
-    axios
-      .post('/orders.json', order)
-      .then(response => {
-        setLoading(false);
-        setPurchasing(false);
-      })
-      .catch(error => {
-        setLoading(false);
-        setPurchasing(false);
-      });
+    // setLoading(true);
+    // const order = {
+    //   ingredients: ingredients,
+    //   price: totalPrice,
+    //   customer: {
+    //     name: 'Saurabh Patel',
+    //     address: {
+    //       street: 'Test Street',
+    //       pinCode: 421301,
+    //       country: 'India'
+    //     },
+    //     email: 'test@mail.com'
+    //   },
+    //   deliveryMethod: 'fastest'
+    // };
+    // axios
+    //   .post('/orders.json', order)
+    //   .then(response => {
+    //     setLoading(false);
+    //     setPurchasing(false);
+    //   })
+    //   .catch(error => {
+    //     setLoading(false);
+    //     setPurchasing(false);
+    //   });
+    const queryParams = [];
+    for (let i in ingredients) {
+      queryParams.push(
+        encodeURIComponent(i) + '=' + encodeURIComponent(ingredients[i])
+      );
+    }
+    const queryString = queryParams.join('&');
+    props.history.push({
+      pathname: '/checkout',
+      search: '?' + queryString
+    });
   };
 
   let orderSummary = null;
