@@ -89,37 +89,13 @@ const BurgerBuilder = props => {
   };
 
   const purchaseContinueHandler = () => {
-    // setLoading(true);
-    // const order = {
-    //   ingredients: ingredients,
-    //   price: totalPrice,
-    //   customer: {
-    //     name: 'Saurabh Patel',
-    //     address: {
-    //       street: 'Test Street',
-    //       pinCode: 421301,
-    //       country: 'India'
-    //     },
-    //     email: 'test@mail.com'
-    //   },
-    //   deliveryMethod: 'fastest'
-    // };
-    // axios
-    //   .post('/orders.json', order)
-    //   .then(response => {
-    //     setLoading(false);
-    //     setPurchasing(false);
-    //   })
-    //   .catch(error => {
-    //     setLoading(false);
-    //     setPurchasing(false);
-    //   });
     const queryParams = [];
     for (let i in ingredients) {
       queryParams.push(
         encodeURIComponent(i) + '=' + encodeURIComponent(ingredients[i])
       );
     }
+    queryParams.push('price=' + totalPrice);
     const queryString = queryParams.join('&');
     props.history.push({
       pathname: '/checkout',
