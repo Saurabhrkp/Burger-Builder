@@ -4,6 +4,7 @@ import Button from '../../../components/UI/Button/Button';
 import Spinner from '../../../components/UI/Spinner/Spinner';
 import styles from './ContactData.module.css';
 import axios from '../../../axios-order';
+import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component {
   state = {
@@ -94,19 +95,16 @@ class ContactData extends Component {
   orderHandler = event => {
     event.preventDefault();
     this.setState({ loading: true });
+    const formData = {};
+    for (let formElementIdentifier in this.state.orderForm) {
+      formData[formElementIdentifier] = this.state.orderForm[
+        formElementIdentifier
+      ].value;
+    }
     const order = {
       ingredients: this.props.ingredients,
       price: this.props.price,
-      customer: {
-        name: 'Saurabh Patel',
-        address: {
-          street: 'Test Street',
-          pinCode: 421301,
-          country: 'India'
-        },
-        email: 'test@mail.com'
-      },
-      deliveryMethod: 'fastest'
+      orderData: formData
     };
     axios
       .post('/orders.json', order)
@@ -160,33 +158,28 @@ class ContactData extends Component {
   };
 
   render() {
+    const formElementsArray = [];
+    for (let key in this.state.orderForm) {
+      formElementsArray.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    }
     let form = (
-      <form>
-        <input
-          className={styles.Input}
-          type='name'
-          name='name'
-          placeholder='Your name here'
-        />
-        <input
-          className={styles.Input}
-          type='email'
-          name='email'
-          placeholder='Your email'
-        />
-        <input
-          className={styles.Input}
-          type='text'
-          name='street'
-          placeholder='Your street'
-        />
-        <input
-          className={styles.Input}
-          type='text'
-          name='postal'
-          placeholder='Your postal code'
-        />
-        <Button btnType='Success' clicked={this.orderHandler}>
+      <form onSubmit={this.orderHandler}>
+        {formElementsArray.map(formElement => (
+          <Input
+            key={formElement.id}
+            elementType={formElement.config.elementType}
+            elementConfig={formElement.config.elementConfig}
+            value={formElement.config.value}
+            invalid={!formElement.config.valid}
+            shouldValidate={formElement.config.validation}
+            touched={formElement.config.touched}
+            changed={event => this.inputChangedHandler(event, formElement.id)}
+          />
+        ))}
+        <Button btnType='Success' disabled={!this.state.formIsValid}>
           ORDER
         </Button>
       </form>
