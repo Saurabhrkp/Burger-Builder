@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import Aux from '../../hoc/Auxiliary/Auxiliary';
@@ -12,7 +12,6 @@ import axios from '../../axios-order';
 import * as actionTypes from '../../store/actions';
 
 const BurgerBuilder = props => {
-  const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -25,7 +24,7 @@ const BurgerBuilder = props => {
       .reduce((sum, el) => {
         return sum + el;
       }, 0);
-    setPurchasable(sum > 0);
+    return sum > 0;
   };
 
   const disabledInfo = { ...props.ings };
@@ -70,7 +69,7 @@ const BurgerBuilder = props => {
           disabled={disabledInfo}
           price={props.price}
           ordered={purchaseHandler}
-          purchasable={purchasable}
+          purchasable={updatePurchaseState(props.ings)}
         />
       </Aux>
     );
