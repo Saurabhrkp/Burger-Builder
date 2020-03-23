@@ -19,21 +19,20 @@ const INGREDIENTS_PRICES = {
 };
 
 const BurgerBuilder = props => {
-  const [ingredients, setIngredients] = useState(null);
   const [totalPrice, setTotalPrice] = useState(4);
   const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    axios
-      .get('/ingredients.json')
-      .then(response => {
-        setIngredients(response.data);
-      })
-      .catch(error => setError(true));
-  }, []);
+  // useEffect(() => {
+  //   axios
+  //     .get('/ingredients.json')
+  //     .then(response => {
+  //       setIngredients(response.data);
+  //     })
+  //     .catch(error => setError(true));
+  // }, []);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
@@ -47,37 +46,37 @@ const BurgerBuilder = props => {
   };
 
   const addIngredientHandler = type => {
-    const oldCount = ingredients[type];
+    const oldCount = props.ings[type];
     const updatedCount = oldCount + 1;
-    const updatedIngredients = { ...ingredients };
+    const updatedIngredients = { ...props.ings };
     updatedIngredients[type] = updatedCount;
     const priceAddition = INGREDIENTS_PRICES[type];
     const oldPrice = totalPrice;
     const newPrice = oldPrice + priceAddition;
     setTotalPrice(newPrice);
-    setIngredients(updatedIngredients);
+    // setIngredients(updatedIngredients);
     updatePurchaseState(updatedIngredients);
   };
 
   const removeIngredientHandler = type => {
-    const oldCount = ingredients[type];
+    const oldCount = props.ings[type];
     if (oldCount <= 0) {
       return;
     }
     const updatedCount = oldCount - 1;
     const updatedIngredients = {
-      ...ingredients
+      ...props.ings
     };
     updatedIngredients[type] = updatedCount;
     const priceDeduction = INGREDIENTS_PRICES[type];
     const oldPrice = totalPrice;
     const newPrice = oldPrice - priceDeduction;
     setTotalPrice(newPrice);
-    setIngredients(updatedIngredients);
+    // setIngredients(updatedIngredients);
     updatePurchaseState(updatedIngredients);
   };
 
-  const disabledInfo = { ...ingredients };
+  const disabledInfo = { ...props.ings };
   for (let key in disabledInfo) {
     disabledInfo[key] = disabledInfo[key] <= 0;
   }
@@ -92,9 +91,9 @@ const BurgerBuilder = props => {
 
   const purchaseContinueHandler = () => {
     const queryParams = [];
-    for (let i in ingredients) {
+    for (let i in props.ings) {
       queryParams.push(
-        encodeURIComponent(i) + '=' + encodeURIComponent(ingredients[i])
+        encodeURIComponent(i) + '=' + encodeURIComponent(props.ings[i])
       );
     }
     queryParams.push('price=' + totalPrice);
@@ -109,13 +108,13 @@ const BurgerBuilder = props => {
 
   let burger = error ? <p>Ingredient can't be loaded!</p> : <Spinner />;
 
-  if (ingredients) {
+  if (props.ings) {
     burger = (
       <Aux>
-        <Buger ingredients={ingredients} />
+        <Buger ingredients={props.ings} />
         <BuildControls
-          ingredientAdded={addIngredientHandler}
-          ingredientRemoved={removeIngredientHandler}
+          ingredientAdded={props.onIngredientAdded}
+          ingredientRemoved={props.onIngredientRemove}
           disabled={disabledInfo}
           price={totalPrice}
           ordered={purchaseHandler}
@@ -125,7 +124,7 @@ const BurgerBuilder = props => {
     );
     orderSummary = (
       <OrderSummary
-        ingredients={ingredients}
+        ingredients={props.ings}
         purchaseCanceled={purchaseCancelHandler}
         purchaseContinued={purchaseContinueHandler}
       />
