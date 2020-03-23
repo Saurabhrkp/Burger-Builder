@@ -41,18 +41,7 @@ const BurgerBuilder = props => {
   };
 
   const purchaseContinueHandler = () => {
-    const queryParams = [];
-    for (let i in props.ings) {
-      queryParams.push(
-        encodeURIComponent(i) + '=' + encodeURIComponent(props.ings[i])
-      );
-    }
-    queryParams.push('price=' + props.price);
-    const queryString = queryParams.join('&');
-    props.history.push({
-      pathname: '/checkout',
-      search: '?' + queryString
-    });
+    props.history.push('/checkout');
   };
 
   let orderSummary = null;
