@@ -11,28 +11,11 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import axios from '../../axios-order';
 import * as actionTypes from '../../store/actions';
 
-const INGREDIENTS_PRICES = {
-  salad: 0.5,
-  bacon: 0.7,
-  meat: 1.3,
-  cheese: 0.4
-};
-
 const BurgerBuilder = props => {
-  const [totalPrice, setTotalPrice] = useState(4);
   const [purchasable, setPurchasable] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   // const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
-
-  // useEffect(() => {
-  //   axios
-  //     .get('/ingredients.json')
-  //     .then(response => {
-  //       setIngredients(response.data);
-  //     })
-  //     .catch(error => setError(true));
-  // }, []);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
@@ -43,37 +26,6 @@ const BurgerBuilder = props => {
         return sum + el;
       }, 0);
     setPurchasable(sum > 0);
-  };
-
-  const addIngredientHandler = type => {
-    const oldCount = props.ings[type];
-    const updatedCount = oldCount + 1;
-    const updatedIngredients = { ...props.ings };
-    updatedIngredients[type] = updatedCount;
-    const priceAddition = INGREDIENTS_PRICES[type];
-    const oldPrice = totalPrice;
-    const newPrice = oldPrice + priceAddition;
-    setTotalPrice(newPrice);
-    // setIngredients(updatedIngredients);
-    updatePurchaseState(updatedIngredients);
-  };
-
-  const removeIngredientHandler = type => {
-    const oldCount = props.ings[type];
-    if (oldCount <= 0) {
-      return;
-    }
-    const updatedCount = oldCount - 1;
-    const updatedIngredients = {
-      ...props.ings
-    };
-    updatedIngredients[type] = updatedCount;
-    const priceDeduction = INGREDIENTS_PRICES[type];
-    const oldPrice = totalPrice;
-    const newPrice = oldPrice - priceDeduction;
-    setTotalPrice(newPrice);
-    // setIngredients(updatedIngredients);
-    updatePurchaseState(updatedIngredients);
   };
 
   const disabledInfo = { ...props.ings };
@@ -96,7 +48,7 @@ const BurgerBuilder = props => {
         encodeURIComponent(i) + '=' + encodeURIComponent(props.ings[i])
       );
     }
-    queryParams.push('price=' + totalPrice);
+    queryParams.push('price=' + props.price);
     const queryString = queryParams.join('&');
     props.history.push({
       pathname: '/checkout',
@@ -116,7 +68,7 @@ const BurgerBuilder = props => {
           ingredientAdded={props.onIngredientAdded}
           ingredientRemoved={props.onIngredientRemove}
           disabled={disabledInfo}
-          price={totalPrice}
+          price={props.price}
           ordered={purchaseHandler}
           purchasable={purchasable}
         />
@@ -147,7 +99,8 @@ const BurgerBuilder = props => {
 
 const mapStateToProps = state => {
   return {
-    ings: state.ingredients
+    ings: state.ingredients,
+    price: state.totalPrice
   };
 };
 const mapDispatchToProps = dispatch => {
