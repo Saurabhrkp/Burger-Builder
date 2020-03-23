@@ -5,7 +5,7 @@ import Spinner from '../../../components/UI/Spinner/Spinner';
 import styles from './ContactData.module.css';
 import axios from '../../../axios-order';
 
-class Contact extends Component {
+class ContactData extends Component {
   state = {
     name: '',
     email: '',
@@ -17,7 +17,6 @@ class Contact extends Component {
   };
 
   orderHandler = event => {
-    console.log(this.props.ingredients);
     event.preventDefault();
     this.setState({ loading: true });
     const order = {
@@ -72,7 +71,7 @@ class Contact extends Component {
           name='postal'
           placeholder='Your postal code'
         />
-        <Button btnType='Success' onClicked={this.orderHandler}>
+        <Button btnType='Success' clicked={this.orderHandler}>
           ORDER
         </Button>
       </form>
@@ -89,4 +88,4 @@ class Contact extends Component {
   }
 }
 
-export default Contact;
+export default ContactData;
