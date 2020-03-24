@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import Aux from '../../hoc/Auxiliary/Auxiliary';
@@ -13,8 +13,10 @@ import * as burgerBuilderActions from '../../store/actions/index';
 
 const BurgerBuilder = props => {
   const [purchasing, setPurchasing] = useState(false);
-  // const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    props.onInitIngredients();
+  }, []);
 
   const updatePurchaseState = ingredients => {
     const sum = Object.keys(ingredients)
@@ -46,7 +48,7 @@ const BurgerBuilder = props => {
 
   let orderSummary = null;
 
-  let burger = error ? <p>Ingredient can't be loaded!</p> : <Spinner />;
+  let burger = props.error ? <p>Ingredient can't be loaded!</p> : <Spinner />;
 
   if (props.ings) {
     burger = (
@@ -71,10 +73,6 @@ const BurgerBuilder = props => {
     );
   }
 
-  // if (loading) {
-  //   orderSummary = <Spinner />;
-  // }
-
   return (
     <Aux>
       <Modal show={purchasing} modalClosed={purchaseCancelHandler}>
@@ -88,7 +86,8 @@ const BurgerBuilder = props => {
 const mapStateToProps = state => {
   return {
     ings: state.ingredients,
-    price: state.totalPrice
+    price: state.totalPrice,
+    error: state.error
   };
 };
 const mapDispatchToProps = dispatch => {
@@ -96,7 +95,8 @@ const mapDispatchToProps = dispatch => {
     onIngredientAdded: ingName =>
       dispatch(burgerBuilderActions.addIngredient(ingName)),
     onIngredientRemove: ingName =>
-      dispatch(burgerBuilderActions.removeIngredient(ingName))
+      dispatch(burgerBuilderActions.removeIngredient(ingName)),
+    onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
   };
 };
 
