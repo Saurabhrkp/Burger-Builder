@@ -91,6 +91,7 @@ const mapStateToProps = state => {
     error: state.burgerBuilder.error
   };
 };
+
 const mapDispatchToProps = dispatch => {
   return {
     onIngredientAdded: ingName => dispatch(actions.addIngredient(ingName)),
