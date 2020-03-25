@@ -16,6 +16,7 @@ const BurgerBuilder = props => {
 
   useEffect(() => {
     props.onInitIngredients();
+    //   eslint-disable-next-line
   }, []);
 
   const updatePurchaseState = ingredients => {
