@@ -7,7 +7,7 @@ import BurgerBuilder from './containers/BurgerBuilder/BurgerBuilder';
 import Logout from './containers/Auth/Logout/Logout';
 import * as actions from './store/actions/index';
 
-function App(props) {
+const App = props => {
   useEffect(() => {
     props.onTryAutoSignup();
     // eslint-disable-next-line
@@ -53,7 +53,7 @@ function App(props) {
       </Layout>
     </div>
   );
-}
+};
 
 const mapStateToProps = state => {
   return {
